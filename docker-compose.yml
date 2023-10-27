@@ -1,0 +1,9 @@
+version: '3.7'
+ 
+services:
+ clamav:
+   restart: always
+   image: registry.elprofesor.io/perses/clamav:23.10.1
+   volumes:
+     - /home/elprofesor/samples/:/samples:ro
+     

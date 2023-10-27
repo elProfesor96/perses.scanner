@@ -1,11 +1,10 @@
 
+class Engine:
+
+    def scan():
 
 
-def scan():
+    def updatedb():
 
 
-def updatedb():
-
-
-def api():
-    
+    def api():
