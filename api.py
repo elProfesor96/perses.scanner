@@ -5,6 +5,9 @@ import subprocess
 
 
 
+class Api:
+    pass
+
 ### change this to your own upload path
 app = Flask(__name__)
 upload_folder = app.config["UPLOAD_FOLDER"] = "/Users/elprofesor/dev/github/perses.scanner/samples/"

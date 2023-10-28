@@ -1,19 +1,19 @@
 version: '3.7'
 
 services:
- clamav:
-   restart: always
-   image: registry.elprofesor.io/perses/clamav:23.10.1
-   volumes:
-     - /Users/elprofesor/dev/github/perses.scanner/samples:/samples:ro
+  clamav:
+    restart: always
+    image: registry.elprofesor.io/perses/clamav:23.10.1
+    volumes:
+    - /Users/elprofesor/dev/github/perses.scanner/samples:/samples:ro
   comodo:
-   restart: always
-   image: registry.elprofesor.io/perses/comodo:0.0.1
-   volumes:
-     - /Users/elprofesor/dev/github/perses.scanner/samples:/samples:ro
+    restart: always
+    image: registry.elprofesor.io/perses/comodo:0.0.1
+    volumes:
+    - /Users/elprofesor/dev/github/perses.scanner/samples:/samples:ro
   avg:
-   restart: always
-   image: registry.elprofesor.io/perses/avg:0.0.1
-   volumes:
-     - /Users/elprofesor/dev/github/perses.scanner/samples:/samples:ro
+    restart: always
+    image: registry.elprofesor.io/perses/avg:0.0.1
+    volumes:
+    - /Users/elprofesor/dev/github/perses.scanner/samples:/samples:ro
      
