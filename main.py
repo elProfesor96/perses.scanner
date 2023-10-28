@@ -8,7 +8,7 @@ This project was inspired by virustotal, but with the redteam focus, offline sca
 Credits:
     https://elprofesor.io
     https://github.com/elprofesor96/perses.scanner""", epilog="Example: ")
-    parser.add_argument("scan", help="Scan with all AV plugins or just one.",nargs='*', action="store")
+    parser.add_argument("scan", help="Scan with all AV plugins. Example: perses scan [FILE]",nargs='*', action="store")
     parser.add_argument("updatedb", help="Updates all the AV plugins databases.",nargs='*', action="store")
     parser.add_argument("list", help="List all AV plugins installed.",nargs='*', action="store")
     parser.add_argument("api", help="Start the api service.",nargs='*', action="store")
@@ -21,7 +21,8 @@ def main():
     args, parser = args_init()
     try:
         if args.scan[0] == 'scan':
-            
+            if args.scan[1]:
+                print("file")
             exit()
         elif args.scan[0] == 'updatedb':
             
