@@ -1,5 +1,6 @@
 import argparse
 import api
+from engine import Engine 
 
 
 def args_init():
@@ -22,7 +23,8 @@ def main():
     try:
         if args.scan[0] == 'scan':
             if args.scan[1]:
-                print("file")
+                engine = Engine()
+                engine.scan(args.scan[1])   
             exit()
         elif args.scan[0] == 'plugins':
             if args.scan[1] == 'list':

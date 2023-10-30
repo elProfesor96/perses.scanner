@@ -1,11 +1,14 @@
+import all
 
 class Engine:
 
-    def scan():
+    def scan(self, file):
+        all_plugins = all.All()
+        all_plugins_result = all_plugins.scan(file)
+        return all_plugins_result
+
+    def updatedb(self):
         pass
 
-    def updatedb():
-        pass
-
-    def api():
+    def api(self):
         pass

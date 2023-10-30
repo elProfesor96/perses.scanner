@@ -24,6 +24,15 @@ class Clamav:
         return result
 
     def pprint(self, result):
+        filename = result.split(":")[0].split("/")[-1]
+        #print(filename)
+        status = result.split(":")[1].split("\n")[0]
+        #print(status)
+        result = ['clamav', filename, status]
         return result
 
 
+#clam = Clamav()
+#result = clam.scan("test.txt")
+#pprint = clam.pprint(result)
+#print(pprint)

@@ -1,9 +1,7 @@
 #### ---------------------------- 
 # code for development, for git clone perses.scanner (DEV) #
 #### ---------------------------- 
-#import os
-#import sys
-#import inspect
+
 
 #currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 #parentdir = os.path.dirname(currentdir)
@@ -13,17 +11,23 @@
 # like plugin module
 #### ---------------------------- 
 
+import json
 import plugin
 
-class Clamav:
+class Comodo:
     def __init__(self):
-        self.clamav = plugin.Plugin("clamav")
+        self.comodo = plugin.Plugin("comodo")
     
     def scan(self, file):
-        result = self.clamav.scan(file, "clamscan")
+        result = self.comodo.scan(file, "")
         return result
 
     def pprint(self, result):
+        json_out = json.loads(result)
+        print(json_out['comodo'])
         return result
 
 
+comodo = Comodo()
+result = comodo.scan("not.txt")
+comodo.pprint(result)

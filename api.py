@@ -1,8 +1,9 @@
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 from flask import make_response
-import subprocess
 import config
+import all
+import json
 
 app = Flask(__name__)
 config = config.Config()
@@ -16,20 +17,17 @@ def scan():
     if request.method == 'POST':
         f = request.files['sample']
         f.save(upload_folder + secure_filename(f.filename))
-        try:
-            clamav_run = subprocess.Popen(['docker', 'run', '-v', '/Users/elprofesor/dev/github/perses.scanner/samples:/samples:ro', '--rm', 'registry.elprofesor.io/perses/clamav:23.10.1', 'clamscan', '/samples/'+secure_filename(f.filename)], stdout=subprocess.PIPE)
-            out, err = clamav_run.communicate()
-            #scan_status = clamav_run.split(":")
-            print(out.decode())
-            scan_filename_parsed = out.decode().split(":")[0]
-            scan_status_parsed = out.decode().split(":")[1].split("\n")[0]
-            response = jsonify({'filename': scan_filename_parsed,
-                            'status': scan_status_parsed
-                            })
-
-            return response
-        except subprocess.CalledProcessError:
-            pass
+        file = secure_filename(f.filename)
+        all_plugins = all.All()
+        result = all_plugins.scan(file)
+        ### small parser for clamav result ###
+        result = result[0][0]
+        result = {
+                "filename": result[1],
+                "status": result[2]
+        }
+        json_out = json.dumps(result)
+        return json_out
             
 @app.get("/check")
 def check():

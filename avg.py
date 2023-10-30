@@ -15,12 +15,12 @@
 
 import plugin
 
-class Clamav:
+class Avg:
     def __init__(self):
-        self.clamav = plugin.Plugin("clamav")
+        self.avg = plugin.Plugin("avg")
     
     def scan(self, file):
-        result = self.clamav.scan(file, "clamscan")
+        result = self.avg.scan(file, "")
         return result
 
     def pprint(self, result):
