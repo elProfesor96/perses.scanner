@@ -1,29 +1,34 @@
-#### ---------------------------- 
-# code for development, for git clone perses.scanner (DEV) #
-#### ---------------------------- 
-#import os
-#import sys
-#import inspect
 
-#currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-#parentdir = os.path.dirname(currentdir)
-#sys.path.insert(0, parentdir)
-#### ---------------------------- 
-# the above code is only for dev project and will let us import modules from the parent directory #
-# like plugin module
-#### ---------------------------- 
 
-import plugin
+import subprocess
+import config
+import json
 
 class Avg:
     def __init__(self):
-        self.avg = plugin.Plugin("avg")
+        self.name = "avg"
+        self.api_upload_folder = config.Config().readApi()[2]
+
     
     def scan(self, file):
-        result = self.avg.scan(file, "")
-        return result
+        try:
+            plugin_run = subprocess.Popen(['docker', 'run','--rm' , '-v', self.api_upload_folder+':/malware:ro',  'registry.elprofesor.io/perses/'+self.name+':23.10.1', '/malware/'+file], stdout=subprocess.PIPE)
+            out, err = plugin_run.communicate()
+            return out.decode()
+        except subprocess.CalledProcessError as e:
+            return e
+        
 
     def pprint(self, result):
-        return result
+        try:
+            json_out = json.loads(result)
+            result = json_out['avg']
+            #print(result)
+            return result
+        except json.decoder.JSONDecodeError:
+            pass
 
 
+avg = Avg()
+result = avg.scan("test.txt")
+print(avg.pprint(result))

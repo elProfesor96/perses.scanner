@@ -1,33 +1,30 @@
-#### ---------------------------- 
-# code for development, for git clone perses.scanner (DEV) #
-#### ---------------------------- 
 
-
-#currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-#parentdir = os.path.dirname(currentdir)
-#sys.path.insert(0, parentdir)
-#### ---------------------------- 
-# the above code is only for dev project and will let us import modules from the parent directory #
-# like plugin module
-#### ---------------------------- 
 
 import json
-import plugin
+import subprocess
+import config
 
 class Comodo:
     def __init__(self):
-        self.comodo = plugin.Plugin("comodo")
+        self.name = 'comodo'
+        self.api_upload_folder = config.Config().readApi()[2]
     
     def scan(self, file):
-        result = self.comodo.scan(file, "")
-        return result
+        try:
+            plugin_run = subprocess.Popen(['docker', 'run','--rm' , '-v', self.api_upload_folder+':/malware:ro',  'registry.elprofesor.io/perses/'+self.name+':23.10.1', '/malware/'+file], stdout=subprocess.PIPE)
+            out, err = plugin_run.communicate()
+            return out.decode()
+        except subprocess.CalledProcessError as e:
+            return e
+        
 
     def pprint(self, result):
-        json_out = json.loads(result)
-        print(json_out['comodo'])
-        return result
+        try:
+            json_out = json.loads(result)
+            print(json_out['comodo'])
+            return result
+        except json.decoder.JSONDecodeError:
+            pass
 
 
-#comodo = Comodo()
-#result = comodo.scan("eicar.com")
-#comodo.pprint(result)
+

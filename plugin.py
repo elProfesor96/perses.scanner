@@ -1,3 +1,8 @@
+### Not using anymore because the dockers have different commands,
+### will be used in the future release as templete generator.
+### 
+
+
 import subprocess
 import config
 
