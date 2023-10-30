@@ -28,6 +28,6 @@ class Comodo:
         return result
 
 
-comodo = Comodo()
-result = comodo.scan("not.txt")
-comodo.pprint(result)
+#comodo = Comodo()
+#result = comodo.scan("not.txt")
+#comodo.pprint(result)
