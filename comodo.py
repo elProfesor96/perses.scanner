@@ -29,5 +29,5 @@ class Comodo:
 
 
 #comodo = Comodo()
-#result = comodo.scan("not.txt")
+#result = comodo.scan("eicar.com")
 #comodo.pprint(result)
