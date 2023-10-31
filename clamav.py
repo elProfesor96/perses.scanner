@@ -8,18 +8,24 @@ class Clamav:
     
     def scan(self, file):
         result = self.clamav.scan(file, "clamscan")
+        #pprint_result = self.pprint(result)
         return result
 
     def pprint(self, result):
-        filename = result.split(":")[0].split("/")[-1]
-        #print(filename)
-        status = result.split(":")[1].split("\n")[0]
-        #print(status)
-        result = ['clamav', filename, status]
-        return result
+        try:
+            filename = result.split(":")[0].split("/")[-1]
+            #print(filename)
+            status = result.split(":")[1].split("\n")[0]
+            #print(status)
+            result = {
+                "filename": filename,
+                "status": status,
+                "plugin": "clamav"
+            }
+            
+            return result
+        except Exception as e:
+            pass
+            
 
 
-clam = Clamav()
-result = clam.scan("test.txt")
-pprint = clam.pprint(result)
-print(pprint)
