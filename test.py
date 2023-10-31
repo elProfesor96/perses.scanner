@@ -1,11 +1,6 @@
-import json
+import engine
 
-result = [[['clamav', 'comodo.py', ' OK']]]
-result = result[0][0]
-result = {
-    "filename": result[1],
-    "status": result[2]
-}
-json_out = json.dumps(result)
+engine = engine.Engine()
 
-print(json_out)
+res = engine.filehash("samples/test.txt")
+print(res)
