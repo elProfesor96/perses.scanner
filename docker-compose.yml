@@ -5,28 +5,30 @@ services:
     restart: no
     container_name: perses_clamav
     image: registry.elprofesor.io/perses/clamav:23.10.1
-    profiles: ['runtime']
+   # profiles: ['runtime']
  #   volumes:
  #   - /Users/elprofesor/dev/github/perses.scanner/samples:/samples:ro
   comodo:
     restart: no
     container_name: perses_comodo
     image: registry.elprofesor.io/perses/comodo:23.10.1
-    profiles: ['runtime']
-  #  volumes:
-  #  - /Users/elprofesor/dev/github/perses.scanner/samples:/samples:ro
+    #profiles: ['runtime']
+    #  volumes:
+    #  - /Users/elprofesor/dev/github/perses.scanner/samples:/samples:ro
   avg:
     restart: no
     container_name: perses_avg
     image: registry.elprofesor.io/perses/avg:23.10.1
-    profiles: ['runtime']
-   # volumes:
-   # - /Users/elprofesor/dev/github/perses.scanner/samples:/samples:ro
-   defender:
-    restart: no
+   # profiles: ['runtime']
+    # volumes:
+    # - /Users/elprofesor/dev/github/perses.scanner/samples:/samples:ro
+  defender:
+    restart: true
     container_name: perses_defender
     image: registry.elprofesor.io/perses/defender:23.10.2
     privileged: true
     volumes:
     - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    - /Users/elprofesor/dev/github/perses.scanner/samples:/samples:ro
+    #profiles: ['defender']
      

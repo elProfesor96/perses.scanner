@@ -4,6 +4,7 @@ import clamav
 import hashlib
 import config
 import database
+import defender
 
 
 
@@ -12,6 +13,7 @@ class Engine:
         self.clamav = clamav.Clamav()
         self.avg = avg.Avg()
         self.comodo = comodo.Comodo()
+        self.defender = defender.Defender()
         self.file_hash = ''
 
         self.config = config.Config()
@@ -31,11 +33,12 @@ class Engine:
             avg_out = self.avg.scan(file, self.file_hash)
             comodo_out = self.comodo.scan(file, self.file_hash)
             clamav_out = self.clamav.scan(file, self.file_hash)
+            defender_out = self.defender.scan(file, self.file_hash)
 
-            raw_result = [clamav_out, avg_out, comodo_out]
+            raw_result = [clamav_out, comodo_out, avg_out, defender_out]
             self.log(raw_result)
 
-            result = [self.clamav.pprint(clamav_out), self.avg.pprint(avg_out), self.comodo.pprint(comodo_out)]
+            result = [self.clamav.pprint(clamav_out), self.comodo.pprint(comodo_out), self.avg.pprint(avg_out), self.defender.pprint(defender_out)]
             self.log(result)
 
             #self.db.insert()
