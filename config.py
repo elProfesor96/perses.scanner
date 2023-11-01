@@ -18,6 +18,7 @@ class Config:
         return self.api_config[0]
         
     def readSlack(self):
-        pass
+        slack_webhook = self.config['SLACK']['SLACK_WEBHOOK']
+        return slack_webhook
         
 

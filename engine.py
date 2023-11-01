@@ -40,7 +40,8 @@ class Engine:
 
             result = [self.clamav.pprint(clamav_out), self.comodo.pprint(comodo_out), self.avg.pprint(avg_out), self.defender.pprint(defender_out)]
             self.log(result)
-
+         
+            
             #self.db.insert()
             return result
 
