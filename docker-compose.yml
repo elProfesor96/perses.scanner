@@ -29,6 +29,6 @@ services:
     privileged: true
     volumes:
     - /sys/fs/cgroup:/sys/fs/cgroup:ro
-    - /Users/elprofesor/dev/github/perses.scanner/samples:/samples:ro
+    - /Users/elprofesor/dev/github/perses.scanner/samples:/malware:ro
     #profiles: ['defender']
      
