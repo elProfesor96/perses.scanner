@@ -3,6 +3,7 @@ import avg
 import clamav
 import hashlib
 import config
+import database
 
 
 
@@ -17,20 +18,28 @@ class Engine:
         self.api_config = self.config.readApi()
         self.upload_folder = self.api_config[2]
 
+        self.db = database.Database()
+
 
     def scan(self, file):
         self.file_hash = self.filehash(self.upload_folder + file)
+        search_hash = self.db.search(self.file_hash)
+        if search_hash:
+            result = search_hash
+            return result
+        else:
+            avg_out = self.avg.scan(file, self.file_hash)
+            comodo_out = self.comodo.scan(file, self.file_hash)
+            clamav_out = self.clamav.scan(file, self.file_hash)
 
-        avg_out = self.avg.scan(file, self.file_hash)
-        comodo_out = self.comodo.scan(file, self.file_hash)
-        clamav_out = self.clamav.scan(file, self.file_hash)
+            raw_result = [clamav_out, avg_out, comodo_out]
+            self.log(raw_result)
 
-        raw_result = [clamav_out, avg_out, comodo_out]
-        self.log( raw_result)
+            result = [self.clamav.pprint(clamav_out), self.avg.pprint(avg_out), self.comodo.pprint(comodo_out)]
+            self.log(result)
 
-        result = [self.clamav.pprint(clamav_out), self.avg.pprint(avg_out), self.comodo.pprint(comodo_out)]
-        self.log(result)
-        return result
+            #self.db.insert()
+            return result
 
     def plugins(self):
         pass

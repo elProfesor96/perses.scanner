@@ -1,8 +1,41 @@
 import sqlite3
 
-## create a database
+
 class Database:
     def __init__(self):
-        pass
+        self.conn = sqlite3.connect('perses.db')
+        self.c = self.conn.cursor()
+        self.c.execute('''CREATE TABLE IF NOT EXISTS perses
+             (id INTEGER PRIMARY KEY, filehash TEXT, filename TEXT, clamav TEXT, comodo TEXT, avg TEXT, defender TEXT, first_scanned TEXT)''')
+        self.conn.commit()
+        self.conn.close()
 
-    
+    def insert(self, filehash, filename, clamav, comodo, avg, defender, first_scanned):
+        self.conn = sqlite3.connect('perses.db')
+        self.c = self.conn.cursor()
+        self.c.execute("INSERT INTO perses VALUES (NULL, '" + filehash + "', '" + filename + "', '" + clamav + "', '" + comodo + "', '" + avg + "', '" + defender + "', '" + first_scanned + "')")
+        self.conn.commit()
+        self.conn.close()
+
+    def search(self, filehash):
+        self.conn = sqlite3.connect('perses.db')
+        self.c = self.conn.cursor()
+        self.c.execute("SELECT * FROM perses WHERE filehash='" + filehash + "'")
+        result = self.c.fetchall()
+        self.conn.close()
+        return result
+
+    def wipe(self):
+        self.conn = sqlite3.connect('perses.db')
+        self.c = self.conn.cursor()
+        self.c.execute("DELETE FROM perses")
+        self.conn.commit()
+        self.conn.close()
+
+#db = Database()
+#db.insert("hashed", "filename", "clam_status", "comodo_status", "avg_status", "defender_status", "first_scanned")
+#result = db.search("hashed")
+#print(result)
+
+
+

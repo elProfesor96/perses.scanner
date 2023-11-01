@@ -1,8 +1,9 @@
 import config
 from slack_sdk.webhook import WebhookClient
 
-
-### slack
+### slack implementation is based on the slack webhook
+### (optional) slack bot with /scan command into the chat/channel
+#  to scan a file directly from slack
 class Integrations:
     def __init__(self):
         self.config = config.Config()
