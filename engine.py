@@ -48,9 +48,11 @@ class Engine:
             result = [self.clamav.pprint(clamav_out), self.comodo.pprint(comodo_out), self.avg.pprint(avg_out), self.defender.pprint(defender_out), analyzed]
             self.log(result)
          
-
-            self.db.insert(self.file_hash, file, result[0]["status"], result[1]["status"], result[2]["status"], result[3]["status"], timestamp)
-            return result
+            if self.file_hash == '275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f':
+                return result
+            else:
+                self.db.insert(self.file_hash, file, result[0]["status"], result[1]["status"], result[2]["status"], result[3]["status"], timestamp)
+                return result
 
     def analyzed(self, flag, timestamp):
         if flag is True:

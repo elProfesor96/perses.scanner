@@ -3,7 +3,7 @@ import sqlite3
 
 class Database:
     def __init__(self):
-        self.conn = sqlite3.connect('perses.db')
+        self.conn = sqlite3.connect('perses.db', check_same_thread=False)
         self.c = self.conn.cursor()
         self.c.execute('''CREATE TABLE IF NOT EXISTS perses
              (id INTEGER PRIMARY KEY, filehash TEXT, filename TEXT, clamav TEXT, comodo TEXT, avg TEXT, defender TEXT, analyzed TEXT)''')
