@@ -11,14 +11,14 @@ class Database:
         self.conn.close()
 
     def insert(self, filehash, filename, clamav, comodo, avg, defender, timestamp):
-        self.conn = sqlite3.connect('perses.db')
+        self.conn = sqlite3.connect('perses.db', check_same_thread=False)
         self.c = self.conn.cursor()
         self.c.execute("INSERT INTO perses VALUES (NULL, '" + filehash + "', '" + filename + "', '" + clamav + "', '" + comodo + "', '" + avg + "', '" + defender + "', '" + timestamp + "')")
         self.conn.commit()
         self.conn.close()
 
     def search(self, filehash):
-        self.conn = sqlite3.connect('perses.db')
+        self.conn = sqlite3.connect('perses.db', check_same_thread=False)
         self.c = self.conn.cursor()
         self.c.execute("SELECT * FROM perses WHERE filehash='" + filehash + "'")
         result = self.c.fetchall()
@@ -26,7 +26,7 @@ class Database:
         return result
 
     def wipe(self):
-        self.conn = sqlite3.connect('perses.db')
+        self.conn = sqlite3.connect('perses.db', check_same_thread=False)
         self.c = self.conn.cursor()
         self.c.execute("DELETE FROM perses")
         self.conn.commit()
