@@ -20,7 +20,7 @@ class Database:
     def search(self, filehash):
         self.conn = sqlite3.connect('perses.db', check_same_thread=False)
         self.c = self.conn.cursor()
-        self.c.execute("SELECT * FROM perses WHERE filehash='" + filehash + "'")
+        self.c.execute("SELECT * FROM perses WHERE filehash=?", (filehash,))
         result = self.c.fetchall()
         self.conn.close()
         return result
