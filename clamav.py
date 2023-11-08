@@ -13,7 +13,7 @@ class Clamav:
         #pprint_result = self.pprint(result)
         return result
 
-    def pprint(self, result):
+    def pprint(self, result, filehash):
         try:
             filename = result.split(":")[0].split("/")[-1]
             #print(filename)
@@ -21,7 +21,7 @@ class Clamav:
             #print(status)
             result = {
                 "filename": filename,
-                "filehash": self.filehash,
+                "filehash": filehash,
                 "status": status,
                 "plugin": "clamav"
             }

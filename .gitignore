@@ -2,3 +2,6 @@ DEBIAN
 Dockerfile
 tests
 plugins
+test.py
+test2.py
+api.py.backup

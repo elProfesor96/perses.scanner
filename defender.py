@@ -19,16 +19,16 @@ class Defender:
             return e
         
 
-    def pprint(self, result):
+    def pprint(self, result, filehash, filename):
         if 'found' in result:
             result = {
-                "filename": self.file,
-                "filehash": self.filehash,
+                "filename": filehash,
+                "filehash": filename,
                 "status": result.split(":")[3].split("\n")[0],
                 "plugin": "defender"
             }
             return result
-        else:
+        elif '0' in result:
             result = {
                     "filename": self.file,
                     "filehash": self.filehash,

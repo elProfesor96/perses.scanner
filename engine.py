@@ -6,6 +6,7 @@ import config
 import database
 import defender
 from datetime import datetime
+import multiprocessing
 
 
 
@@ -20,14 +21,31 @@ class Engine:
         self.config = config.Config()
         self.api_config = self.config.readApi()
         self.upload_folder = self.api_config[2]
+        self.plugins = ['clamav', 'comodo', 'avg', 'defender']
+        db = database.Database()
 
-        self.db = database.Database()
+        
 
+    def scanForMultiprocess(self, file, filehash, plugin):
+        if plugin == 'clamav':
+            result = self.clamav.scan(file, filehash)
+            return result
+        elif plugin == 'comodo':
+            result = self.comodo.scan(file, filehash)
+            return result
+        elif plugin == 'avg':
+            result = self.avg.scan(file, filehash)
+            return result
+        elif plugin == 'defender':
+            result = self.defender.scan(file, filehash)
+            return result
 
     def scan(self, file):
-        self.file_hash = self.filehash(self.upload_folder + file)
-        search_hash = self.db.search(self.file_hash)
-
+        file_hash = self.filehash(self.upload_folder + file)
+        db = database.Database()
+        search_hash = db.search(file_hash)
+        self.log(file_hash)
+        #self.log(search_hash)
         timestamp = self.timestamp()
 
         if search_hash:
@@ -35,24 +53,49 @@ class Engine:
             result = self.toJson(result_search)
             return result
         else:
-            avg_out = self.avg.scan(file, self.file_hash)
-            comodo_out = self.comodo.scan(file, self.file_hash)
-            clamav_out = self.clamav.scan(file, self.file_hash)
-            defender_out = self.defender.scan(file, self.file_hash)
+           # avg_out = self.avg.scan(file, self.file_hash)
+           # comodo_out = self.comodo.scan(file, self.file_hash)
+           # clamav_out = self.clamav.scan(file, self.file_hash)
+           # defender_out = self.defender.scan(file, self.file_hash)
+            ## multi
+            #raw_result = []
+       
+            
+            pool = multiprocessing.Pool(processes=4)
+            raw_result = pool.starmap(self.scanForMultiprocess, 
+                                    [(file, file_hash, 'clamav'), 
+                                    (file, file_hash, 'comodo'), 
+                                    (file, file_hash, 'avg'), 
+                                    (file, file_hash, 'defender')])
+                
+            pool.close()
+            pool.join()
+            
 
             analyzed = self.analyzed(False, timestamp)
 
-            raw_result = [clamav_out, comodo_out, avg_out, defender_out, analyzed]
+            #raw_result = [clamav_out, comodo_out, avg_out, defender_out, analyzed]
             self.log(raw_result)
 
-            result = [self.clamav.pprint(clamav_out), self.comodo.pprint(comodo_out), self.avg.pprint(avg_out), self.defender.pprint(defender_out), analyzed]
+            result = [self.clamav.pprint(raw_result[0], file_hash), 
+                        self.comodo.pprint(raw_result[1], file_hash, file), 
+                        self.avg.pprint(raw_result[2], file_hash, file), 
+                        self.defender.pprint(raw_result[3], file_hash, file), 
+                        analyzed]
             self.log(result)
-         
-            if self.file_hash == '275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f':
+            
+            if file_hash == '275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f':
                 return result
             else:
-                self.db.insert(self.file_hash, file, result[0]["status"], result[1]["status"], result[2]["status"], result[3]["status"], timestamp)
+                try:
+                    db.insert(file_hash, file, result[0]["status"], result[1]["status"], result[2]["status"], result[3]["status"], timestamp)
+                    return result
+                except TypeError:
+                    self.log('Defender plugin error')
+                    db.insert(file_hash, file, result[0]["status"], result[1]["status"], result[2]["status"], "NULL", timestamp)
+                    pass
                 return result
+        
 
     def analyzed(self, flag, timestamp):
         if flag is True:
@@ -120,6 +163,11 @@ class Engine:
         with open(file,"rb") as f:
             for byte_block in iter(lambda: f.read(4096),b""):
                 sha256_hash.update(byte_block)
+        return sha256_hash.hexdigest()
+
+    def filehashRequest(self, contents):
+        sha256_hash = hashlib.sha256()
+        sha256_hash.update(contents)
         return sha256_hash.hexdigest()
 
     def log(self, result):

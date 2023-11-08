@@ -23,13 +23,13 @@ class Avg:
             return e
         
 
-    def pprint(self, result):
+    def pprint(self, result, filehash, filename):
         try:
             json_out = json.loads(result)
             json_avg = json_out['avg']
             result = {
-                "filename": self.file,
-                "filehash": self.filehash,
+                "filename": filename,
+                "filehash": filehash,
                 "status": str(json_avg["infected"])  + json_avg["result"],
                 "plugin": "avg"
             }
