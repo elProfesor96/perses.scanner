@@ -1,0 +1,76 @@
+#!/usr/bin/python3
+
+import requests
+import subprocess
+import json
+import time
+import argparse
+import os
+import warnings
+warnings.filterwarnings("ignore", module="urllib3")
+import config
+
+config = config.Config()    
+perses_license = config.readPersesLicente()
+default_perses_server = config.readDefaultPersesServer()
+
+if 'https://'  in default_perses_server:
+    default_perses_server = default_perses_server
+else:
+    default_perses_server = 'https://'+default_perses_server
+    
+parser = argparse.ArgumentParser(description="Perses Scanner CLI tool")
+parser.add_argument('-f', '--filename', required=True, help='The filename')
+parser.add_argument('-e', '--endpoint', default='{}'.format(default_perses_server), help='The endpoint (-e can be skipped. default = {})'.format(default_perses_server))
+args = parser.parse_args()
+
+filename = args.filename
+endpoint = args.endpoint
+
+if not os.path.isfile(filename):
+    os.system("clear")
+    print("[*] Perses Scanner\n")
+    print("[-] Cannot open file for upload\n")
+    exit()
+
+if endpoint[-1] == "/":
+    endpoint = endpoint
+else:
+    endpoint = endpoint + "/"
+    
+os.system("clear")
+print("[*] Perses Scanner\n")
+print("[*] File is uploading\n")
+
+sub=subprocess.run(['curl', '-F', 'sample=@{}'.format(filename), '{}scan'.format(endpoint), '-k', '-H', 'Perses-License: '+'{}'.format(perses_license)],stdout=subprocess.PIPE)
+
+upload=sub.stdout
+try:
+    js=json.loads(upload)
+except json.decoder.JSONDecodeError:
+    print("\n[-] Error in uploading file. Check the server address and the license key.\n")
+    exit()
+
+headers = {"Perses-License" : perses_license}
+
+if "scanid" in js:
+    scanid=js['scanid']
+    while True:
+          result=requests.get('{}check?scanid={}'.format(endpoint,scanid), verify=False, headers=headers)
+          js=json.loads(result.content)
+          if 'status' in js:
+             os.system("clear")
+             print("[*] Perses Scanner\n")
+             print("[+] File uploaded successfuly")
+             print('[*] Status: {}'.format(js['status']))
+          elif len(js)>0:
+             os.system("clear")
+             print("[*] Perses Scanner\n")
+             print("[+] File uploaded successfuly")
+             print('[+] Status: DONE\n')
+             print(json.dumps(js, indent=4))
+             break
+          else:
+             print('Error in checking task {}'.format(scanid))
+             break
+          time.sleep(5)
