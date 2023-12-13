@@ -6,14 +6,14 @@ class Database:
         self.conn = sqlite3.connect('perses.db', check_same_thread=False)
         self.c = self.conn.cursor()
         self.c.execute('''CREATE TABLE IF NOT EXISTS perses
-             (id INTEGER PRIMARY KEY, filehash TEXT, filename TEXT, clamav TEXT, comodo TEXT, avg TEXT, defender TEXT, analyzed TEXT)''')
+             (id INTEGER PRIMARY KEY, filehash TEXT, filename TEXT, clamav TEXT, comodo TEXT, avg TEXT, defender TEXT, symantec TEXT, analyzed TEXT)''')
         self.conn.commit()
         self.conn.close()
 
-    def insert(self, filehash, filename, clamav, comodo, avg, defender, timestamp):
+    def insert(self, filehash, filename, clamav, comodo, avg, defender, symantec ,timestamp):
         self.conn = sqlite3.connect('perses.db', check_same_thread=False)
         self.c = self.conn.cursor()
-        self.c.execute("INSERT INTO perses VALUES (NULL, '" + filehash + "', '" + filename + "', '" + clamav + "', '" + comodo + "', '" + avg + "', '" + defender + "', '" + timestamp + "')")
+        self.c.execute("INSERT INTO perses VALUES (NULL, '" + filehash + "', '" + filename + "', '" + clamav + "', '" + comodo + "', '" + avg + "', '" + defender + "', '" + symantec + "' ,'" + timestamp + "')")
         self.conn.commit()
         self.conn.close()
 

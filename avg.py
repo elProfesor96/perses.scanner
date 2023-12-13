@@ -19,8 +19,14 @@ class Avg:
             plugin_run = subprocess.Popen(['docker', 'run','--rm' , '-v', self.api_upload_folder+':/malware:ro',  'registry.elprofesor.io/perses/'+self.name+':23.10.1', '/malware/'+file], stdout=subprocess.PIPE)
             out, err = plugin_run.communicate()
             return out.decode()
-        except subprocess.CalledProcessError as e:
-            return e
+        except (subprocess.CalledProcessError, TypeError):
+            result = {
+                "filename": file,
+                "filehash": filehash,
+                "status": "ERROR",
+                "plugin": "avg"
+            } 
+            return result
         
 
     def pprint(self, result, filehash, filename):

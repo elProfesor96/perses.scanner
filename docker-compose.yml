@@ -31,4 +31,11 @@ services:
     - /sys/fs/cgroup:/sys/fs/cgroup:ro
     - /Users/elprofesor/dev/github/perses.scanner/samples:/malware:ro
     #profiles: ['defender']
+  symantec:
+    restart: 'no'
+    container_name: perses_symantec
+    image: registry.elprofesor.io/perses/symantec:23.12.1
+    volumes:
+    - /Users/elprofesor/dev/github/perses.scanner/samples:/malware:ro
+
      

@@ -7,6 +7,7 @@ import database
 import defender
 from datetime import datetime
 import multiprocessing
+import symantec
 
 
 
@@ -16,12 +17,13 @@ class Engine:
         self.avg = avg.Avg()
         self.comodo = comodo.Comodo()
         self.defender = defender.Defender()
+        self.symantec = symantec.Symantec()
         self.file_hash = ''
 
         self.config = config.Config()
         self.api_config = self.config.readApi()
         self.upload_folder = self.api_config[2]
-        self.plugins = ['clamav', 'comodo', 'avg', 'defender']
+        self.plugins = ['clamav', 'comodo', 'avg', 'defender', 'symantec']
         db = database.Database()
 
         
@@ -38,6 +40,9 @@ class Engine:
             return result
         elif plugin == 'defender':
             result = self.defender.scan(file, filehash)
+            return result
+        elif plugin == 'symantec':
+            result = self.symantec.scan(file, filehash)
             return result
 
     def scan(self, file):
@@ -66,7 +71,8 @@ class Engine:
                                     [(file, file_hash, 'clamav'), 
                                     (file, file_hash, 'comodo'), 
                                     (file, file_hash, 'avg'), 
-                                    (file, file_hash, 'defender')])
+                                    (file, file_hash, 'defender'),
+                                    (file, file_hash, 'symantec')])
                 
             pool.close()
             pool.join()
@@ -80,7 +86,8 @@ class Engine:
             result = [self.clamav.pprint(raw_result[0], file_hash), 
                         self.comodo.pprint(raw_result[1], file_hash, file), 
                         self.avg.pprint(raw_result[2], file_hash, file), 
-                        self.defender.pprint(raw_result[3], file_hash, file), 
+                        self.defender.pprint(raw_result[3], file_hash, file),
+                        self.symantec.pprint(raw_result[4], file_hash, file),
                         analyzed]
             self.log(result)
             
@@ -88,11 +95,11 @@ class Engine:
                 return result
             else:
                 try:
-                    db.insert(file_hash, file, result[0]["status"], result[1]["status"], result[2]["status"], result[3]["status"], timestamp)
+                    db.insert(file_hash, file, result[0]["status"], result[1]["status"], result[2]["status"], result[3]["status"], result[4]["status"], timestamp)
                     return result
                 except TypeError:
-                    self.log('Defender plugin error')
-                    db.insert(file_hash, file, result[0]["status"], result[1]["status"], result[2]["status"], "NULL", timestamp)
+                    self.log('Defender plugin error or other errors, no insert into DB')
+                    #db.insert(file_hash, file, result[0]["status"], result[1]["status"], result[2]["status"], "NULL", timestamp)
                     pass
                 return result
         
